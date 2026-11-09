@@ -1,0 +1,22 @@
+{
+  "books.pkl": {
+    "bytes": 71737057,
+    "sha256": "107ea5d08917a05acb80deea64389efc48bd28ac3f79a6983d93d38f210cea9f"
+  },
+  "popular_df.pkl": {
+    "bytes": 15538,
+    "sha256": "c385fe79f97f493e37519f05062ffb10ad9bb3df5cf96b147047b090bf7fd14a"
+  },
+  "pt.pkl": {
+    "bytes": 4600994,
+    "sha256": "1872fade9812447f53fb67d354a8cd098996f96628e1d8a7d46e0522a3a6e90e"
+  },
+  "Ratings.csv": {
+    "bytes": 29532495,
+    "sha256": "a35733a230feb81f1aec9b57c412d84f164284d7921e5082b76cf4c23fa63562"
+  },
+  "similarity_score.pkl": {
+    "bytes": 3987651,
+    "sha256": "b982367fb033d9de213d4b3fea98465c76c846207b720114c4f32c15a7d0e2e7"
+  }
+}
