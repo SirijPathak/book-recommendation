@@ -1,193 +1,42 @@
+{% extends "base.html" %}
+{% block content %}
+    <h1>Recommend Books</h1>
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Book Recommender System</title>
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css"
-          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-    <style>
-        body {
-            background-color: #121212;
-            color: white;
-            font-family: Arial, sans-serif;
-        }
+    <p class="search-help" id="search-help">Choose a suggestion or enter a title. Try
+        <a href="{{ url_for('recommend_ui', title='1984') }}">1984</a> or
+        <a href="{{ url_for('recommend_ui', title='The Hours: A Novel') }}">The Hours</a>.</p>
+    <form action="{{ url_for('recommend') }}" method="post" class="search-form">
+        <input name="user_input" type="text" id="autocomplete" list="book-suggestions" autocomplete="off"
+               data-autocomplete-url="{{ url_for('autocomplete') }}" maxlength="500"
+               aria-label="Book title" aria-describedby="search-help" placeholder="Enter a book title" value="{{ query or '' }}" required>
+        <datalist id="book-suggestions"></datalist>
+        <button type="submit">Search</button>
+    </form>
 
-        .navbar {
-            background-color: #1f1f1f;
-            border-color: #333;
-        }
+    {% if error %}
+        <p class="error-message" role="alert">{{ error }}</p>
+    {% endif %}
 
-        .navbar-brand {
-            background-color: #00a65a;
-            color: white;
-            font-size: 1.5em;
-            padding: 10px 20px;
-        }
-
-        .navbar-nav > li > a {
-            color: #ddd;
-            font-size: 1.2em;
-        }
-
-        .navbar-nav > li > a:hover {
-            color: #00a65a;
-        }
-
-        .container {
-            margin-top: 30px;
-        }
-
-        .text-center h1 {
-            font-size: 50px;
-            margin-bottom: 40px;
-        }
-
-        .form-inline .form-control {
-            width: 500px;
-            height: 50px;
-            background-color: #1f1f1f;
-            border: 1px solid #333;
-            color: white;
-            border-radius: 10px;
-        }
-
-        .form-inline .form-control:focus {
-            border-color: #00a65a;
-            box-shadow: none;
-        }
-
-        .form-inline .btn-warning {
-            width: 150px;
-            height: 50px;
-            background-color: #00a65a;
-            border-color: #00a65a;
-            color: white;
-            border-radius: 10px;
-        }
-
-        .form-inline .btn-warning:hover {
-            background-color: #008f4f;
-            border-color: #008f4f;
-        }
-
-        .row.equal-height {
-            display: flex;
-            flex-wrap: wrap;
-            margin-bottom: 30px; /* Space between rows */
-        }
-
-        .row.equal-height .col-md-3 {
-            flex: 1;
-            max-width: 23%;
-            padding-left: 15px;
-            padding-right: 15px;
-            margin-bottom: 30px;
-            box-sizing: border-box; /* Ensure padding and borders are included in the width and height */
-        }
-
-        .card {
-            background-color: #1f1f1f;
-            border: 1px solid #333;
-            border-radius: 10px;
-            padding: 20px;
-            transition: transform 0.2s;
-            height: 400px; /* Fixed height for uniformity */
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .card:hover {
-            transform: scale(1.05);
-        }
-
-        .card-body img {
-            width: 100%;
-            height: auto;
-            border-radius: 10px;
-            margin-bottom: 15px;
-            max-height: 250px; /* Limit image height to ensure consistency */
-            object-fit: cover; /* Ensure image covers the available space */
-        }
-
-        .card-body h3 {
-            color: #00a65a;
-            text-align: center;
-            margin-bottom: 0;
-        }
-
-        .card-body p {
-            text-align: center;
-            margin-top: 10px;
-            margin-bottom: 0;
-        }
-    </style>
-    <!-- jQuery and Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js"
-            integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxIZlARbxEmeI5mSU7jUlcrxgPHaP6yxop8r5"
-            crossorigin="anonymous"></script>
-    <!-- Typeahead JS for autocomplete -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-3-typeahead/4.0.2/bootstrap3-typeahead.min.js"></script>
-</head>
-<body>
-    <nav class="navbar navbar-default">
-        <div class="container-fluid">
-            <div class="navbar-header">
-                <a class="navbar-brand" href="/">My Book Recommender</a>
-            </div>
-            <ul class="nav navbar-nav">
-                <li><a href="/">Home</a></li>
-                <li><a href="/recommend">Book Recommend</a></li>
-<!--                <li><a href="#">Contact</a></li> -->
-            </ul>
-        </div>
-    </nav>
-
-    <div class="container">
-        <div class="row">
-            <div class="col-md-12 text-center">
-                <h1>Recommend Books</h1>
-                <form action="/recommend_books" method="post" class="form-inline">
-                    <div class="form-group">
-                        <input name="user_input" type="text" class="form-control input-lg" id="autocomplete" placeholder="Enter a book title" required>
-                    </div>
-                    <button type="submit" class="btn btn-warning btn-lg">Search</button>
-                </form>
-            </div>
-        </div>
-
-        <div class="row equal-height" style="margin-top: 50px;">
-            {% if data %}
+    {% if data %}
+        {% if fallback %}
+        <h2>Popular books to explore after {{ query }}</h2>
+        <p class="search-help" role="status">We do not have enough shared reader ratings for this book yet. Here are reader favorites to explore.</p>
+        {% else %}
+        <h2>Because you liked {{ query }}</h2>
+        {% endif %}
+        <div class="grid-container">
             {% for i in data %}
-                <div class="col-md-3">
-                    <div class="card">
-                        <div class="card-body">
-                            <img class="card-img-top" src="{{i[2]}}" alt="{{i[0]}}">
-                            <h3>{{i[0]}}</h3>
-                            <p>{{i[1]}}</p>
-                        </div>
+                <div class="grid-item">
+                    {% with src=i[2], title=i[0] %}{% include "_cover.html" %}{% endwith %}
+                    <div class="card-body">
+                        <p class="book-title">{{ i[0] }}</p>
+                        <p class="text-highlight">by {{ i[1] }}</p>
                     </div>
                 </div>
             {% endfor %}
-            {% endif %}
         </div>
-    </div>
-
-    <script type="text/javascript">
-        $(document).ready(function(){
-            $('#autocomplete').typeahead({
-                source: function(query, process) {
-                    return $.get('/autocomplete', { q: query }, function(data) {
-                        return process(data);
-                    });
-                }
-            });
-        });
-    </script>
-</body>
-</html>
-
+    {% endif %}
+{% endblock %}
+{% block scripts %}
+    <script src="{{ url_for('static', filename='autocomplete.js') }}"></script>
+{% endblock %}

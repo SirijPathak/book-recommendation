@@ -1,0 +1,17 @@
+{
+  "seed": 42,
+  "k": 9,
+  "held_out_users": 7445,
+  "training_works": 638,
+  "target_and_seed_coverage": 0.17394224311618536,
+  "metrics": {
+    "collaborative": {
+      "recall@9": 0.0335795836131632,
+      "ndcg@9": 0.022268843209921566
+    },
+    "popularity": {
+      "recall@9": 0.016655473472128944,
+      "ndcg@9": 0.008896080732032867
+    }
+  }
+}
